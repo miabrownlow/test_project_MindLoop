@@ -1,0 +1,76 @@
+// --- Button B: change color ---
+input.buttonB.onEvent(ButtonEvent.Click, function () {
+    colorIndex = (colorIndex + 1) % colors.length
+    updateColor()
+})
+// --- Button A: turn lights on/off ---
+input.buttonA.onEvent(ButtonEvent.Click, function () {
+    lightsOn = !(lightsOn)
+    if (!(lightsOn)) {
+        light.clear()
+    } else {
+        updateColor()
+    }
+})
+// --- Function to fade brightness ---
+function fadeBrightness(start: number, end: number, step: number, delay: number, color2: number) {
+    brightness = start
+    while (step > 0 && brightness <= end || step < 0 && brightness >= end) {
+        if (!(pulsing) || !(lightsOn)) {
+            return;
+        }
+        light.setBrightness(brightness)
+        light.setAll(color2)
+        pause(delay)
+        brightness += step
+    }
+}
+// --- Update color ---
+function updateColor() {
+    currentColor2 = colors[colorIndex]
+    pulsing = pulsingColors.indexOf(colorIndex) >= 0
+    if (lightsOn) {
+        light.setAll(currentColor2)
+    } else {
+        light.clear()
+    }
+}
+let currentColor2 = 0
+let brightness = 0
+let colorIndex = 0
+let currentColor = 0
+let pulsing = false
+let pulsingColors: number[] = []
+let colors: number[] = []
+let lightsOn = false
+lightsOn = true
+colors = [light.rgb(255, 0, 0), light.rgb(0, 0, 139), light.rgb(128, 0, 128), light.rgb(0, 100, 0), light.rgb(255, 165, 0), light.rgb(255, 255, 0), light.rgb(144, 238, 144), light.rgb(0, 191, 255)]
+pulsingColors = [0, 1, 2, 3]
+// --- Background pulse loop ---
+control.runInParallel(function () {
+    while (true) {
+        if (lightsOn && pulsing) {
+            currentColor = colors[colorIndex]
+            // Fade up (2 → 100)
+            fadeBrightness(2, 100, 2, 60, currentColor)
+            if (!(pulsing) || !(lightsOn)) {
+                continue;
+            }
+            light.setBrightness(100)
+            pause(3000)
+            // Fade down (100 → 2)
+            fadeBrightness(100, 2, -2, 60, currentColor)
+            if (!(pulsing) || !(lightsOn)) {
+                continue;
+            }
+            light.setBrightness(2)
+            pause(3000)
+        } else if (lightsOn && !(pulsing)) {
+            light.setBrightness(255)
+            light.setAll(colors[colorIndex])
+        } else {
+            light.clear()
+        }
+        pause(100)
+    }
+}) 
