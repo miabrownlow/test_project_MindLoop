@@ -34,7 +34,7 @@ Microsoft MakeCode for the Adafruit Circuit Playground Express.
 
   ## Hardware & Board
     Adafruit Circuit Playground Express
-    Firmware: Adafruit UF2 Bootloader 3.x or newer
-    Built-in NeoPixel ring (10 LEDs)
+      Firmware: Adafruit UF2 Bootloader 3.x or newer
+      Built-in NeoPixel ring (10 LEDs)
 
 # Features
